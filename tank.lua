@@ -1,9 +1,9 @@
 local Settings = {
 	["Reach Settings"] = {
 		Enabled = true; -- Whether or not the reach is enabled or not
-		Distance = 4; -- Distance around the tools handle
+		Distance = 3; -- Distance around the tools handle
 
-		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
+		LimbSelection = {["Left Arm"] = false, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
 		HitRate = 0.01; -- Rate at which the limbs will be hit.
 		LungeOnly = false; -- Whether or not the reach will be active only on lunge
