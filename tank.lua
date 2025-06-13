@@ -5,7 +5,7 @@ local Settings = {
 
 		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
-		HitRate = 0.01; -- Rate at which the limbs will be hit.
+		HitRate = 0.0088; -- Rate at which the limbs will be hit.
 		LungeOnly = true; -- Whether or not the reach will be active only on lunge
 	};
 
@@ -43,8 +43,8 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players["LocalPlayer"]
-local Simulation = RunService.PreAnimation;
-local PostSimulation = RunService.PreAnimation;
+local Simulation = RunService.PreSimulation;
+local PostSimulation = RunService.PostSimulation;
 
 local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/jasvnn/Roblox/refs/heads/main/notifLib.lua"))()
 
@@ -143,7 +143,7 @@ local UnProtectConnections = function(Obj)
 end
 
 local JointObjects = function(Handle:Part)
-	return Simulation:Connect(function()
+	Simulation:Once(function()
 		for _, JointStorage in pairs(ScriptStorage.Joints) do
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
@@ -162,8 +162,6 @@ local CharacterConnections = {
 	Added = nil;
 	Removed = nil;
 }
-
-local BringConn = nil
 
 local OnCharacterAdded = function(Character)
 
@@ -188,8 +186,6 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Handle = Handle
 
 			ScriptStorage.Tools[self] = true
-			BringConn = JointObjects(Handle)
-
 		end
 	end)
 
@@ -201,17 +197,16 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Humanoid = nil
 			ScriptStorage.CurrentObjects.Tool = nil
 			ScriptStorage.CurrentObjects.Handle = nil
-			BringConn = nil
 			
 			table.remove(ScriptStorage.Tools, table.find(ScriptStorage.Tools, self))
 		end
 	end)
 end
 
-Players.LocalPlayer.CharacterAdded:Connect(OnCharacterAdded)
+LocalPlayer.CharacterAdded:Connect(OnCharacterAdded)
 
-if Players.LocalPlayer.Character then
-	OnCharacterAdded(Players.LocalPlayer.Character)
+if LocalPlayer.Character then
+	OnCharacterAdded(LocalPlayer.Character)
 end
 
 RunService.Stepped:Connect(function()
@@ -223,7 +218,7 @@ RunService.Stepped:Connect(function()
 			if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
 
 			for _,Player in pairs(Players:GetPlayers()) do
-				if Player == Players.LocalPlayer then continue end
+				if Player == LocalPlayer or Player.Team == LocalPlayer.Team then continue end
 				if Player.Character then
 					local Humanoid = Player.Character:FindFirstChild("Humanoid")
 					if Humanoid and Humanoid.Health > 0 then
@@ -245,6 +240,12 @@ RunService.Stepped:Connect(function()
 		end
 	else
 		table.clear(ScriptStorage.Joints)
+	end
+end)
+
+task.spawn(function()
+	while ScriptStorage.CurrentObjects.Handle and task.wait(Settings["Reach Settings"].HitRate) do
+		JointObjects(ScriptStorage.CurrentObjects.Handle)
 	end
 end)
 
