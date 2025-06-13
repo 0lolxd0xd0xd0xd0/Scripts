@@ -186,15 +186,6 @@ local CharacterConnections = {
 }
 
 local OnCharacterAdded = function(Character)
-
-	if CharacterConnections.Added or CharacterConnections.Removed then
-		CharacterConnections.Added:Disconnect()
-		CharacterConnections.Removed:Disconnect()
-		
-		CharacterConnections.Added = nil
-		CharacterConnections.Removed = nil
-	end
-	
 	local isTool = Character:FindFirstChildOfClass("Tool")
 	if isTool and not table.find(ScriptStorage.Tools, isTool) then
 		local Humanoid = Character.Humanoid
@@ -217,7 +208,7 @@ local OnCharacterAdded = function(Character)
 		end)
 	end
 	
-	CharacterConnections.Added = Character.ChildAdded:Connect(function(self)
+	Character.ChildAdded:Connect(function(self)
 		if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self)) then
 			local Humanoid = Character.Humanoid
 			local Tool = self
@@ -240,7 +231,7 @@ local OnCharacterAdded = function(Character)
 		end
 	end)
 
-	CharacterConnections.Removed = Character.ChildRemoved:Connect(function(self)
+	Character.ChildRemoved:Connect(function(self)
 		if (self:IsA("Tool") and table.find(ScriptStorage.Tools, self)) then
 			table.clear(ScriptStorage.Joints)
 			
@@ -255,6 +246,17 @@ local OnCharacterAdded = function(Character)
 end
 
 LocalPlayer.CharacterAdded:Connect(OnCharacterAdded)
+
+LocalPlayer.CharacterRemoving:Connect(function()
+	table.clear(ScriptStorage.Joints)
+
+	ScriptStorage.CurrentObjects.Character = nil
+	ScriptStorage.CurrentObjects.Humanoid = nil
+	ScriptStorage.CurrentObjects.Tool = nil
+	ScriptStorage.CurrentObjects.Handle = nil
+
+	table.clear(ScriptStorage.Tools)
+end)
 
 if LocalPlayer.Character then
 	OnCharacterAdded(LocalPlayer.Character)
