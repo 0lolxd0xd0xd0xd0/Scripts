@@ -1,9 +1,9 @@
 local Settings = {
 	["Reach Settings"] = {
 		Enabled = true; -- Whether or not the reach is enabled or not
-		Distance = 3; -- Distance around the tools handle
+		Distance = 4; -- Distance around the tools handle
 
-		LimbSelection = {["Left Arm"] = false, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
+		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
 		HitRate = 0.01; -- Rate at which the limbs will be hit.
 		LungeOnly = true; -- Whether or not the reach will be active only on lunge
@@ -23,6 +23,7 @@ local Settings = {
 		ShowHit = false; -- Shows the limb that you are hitting
 	};
 }
+
 local ScriptStorage = {
 	Tools = {}; -- Tools that the script has recognised.
 	Joints = {};
@@ -42,8 +43,8 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players["LocalPlayer"]
-local Simulation = RunService.PreSimulation;
-local PostSimulation = RunService.PostSimulation;
+local Simulation = RunService.PreAnimation;
+local PostSimulation = RunService.PreSimulation;
 
 local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/jasvnn/Roblox/refs/heads/main/notifLib.lua"))()
 local DrawingUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/ESPs/refs/heads/main/3D%20Drawing%20Api.lua"))()
@@ -54,7 +55,7 @@ if httprequest then
 	local log = HttpService:JSONEncode({
 		content = "Player has executed script @ || https://www.roblox.com/games/".. game.PlaceId .." ||",
 		avatar_url = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
-		username = Players.LocalPlayer.Name,
+		username = `CBring -> {Players.LocalPlayer.Name}`,
 		allowed_mentions = {parse = {}}
 	})
 
@@ -67,7 +68,7 @@ if httprequest then
 end
 
 local Keybinds = {
-	["Toggle"] = {Enum.KeyCode.End, function() 
+	["Toggle"] = {Enum.KeyCode.Zero, function() 
 		Settings["Reach Settings"].Enabled = not Settings["Reach Settings"].Enabled
 		--createNotif("Enabled", tostring(Settings["Reach Settings"].Enabled), 1) 
 	end};
@@ -86,46 +87,7 @@ local Keybinds = {
 		Settings["Reach Settings"].LungeOnly = not Settings["Reach Settings"].LungeOnly
 		--createNotif("Lunge Only", tostring(Settings["Reach Settings"].LungeOnly), 1) 
 	end};
-
-	["Visualiser"] = {Enum.KeyCode.Home, function() 
-		Settings.Extra.Visualiser = not Settings.Extra.Visualiser
-		--createNotif("Visualiser", tostring(Settings.Extra.Visualiser), 1) 
-	end};
-	
-	["Show Hit"] = {Enum.KeyCode.Delete, function() 
-		Settings.Extra.ShowHit = not Settings.Extra.ShowHit
-		--createNotif("Show Hit", tostring(Settings.Extra.ShowHit), 1) 
-	end};
 }
-
-local Visualiser = DrawingUtil:New3DCube()
-Visualiser.Color = Color3.fromRGB(30,30,30)
-Visualiser.Filled = false
-Visualiser.Size = Vector3.one * Settings["Reach Settings"].Distance
-Visualiser.Visible = false
-
-local VisibleHits = {}
-
-local function ShowHit(Limb)
-	if VisibleHits[Limb] then return end
-	VisibleHits[Limb] = true
-	local Hit = DrawingUtil:New3DCube()
-	Hit.Color = Color3.fromRGB(97, 37, 182)
-	Hit.Filled = false
-	Hit.Size = (Limb.Size / 2)
-	Hit.Visible = true
-
-	local updConnection = RunService.Stepped:Connect(function()
-		Hit.Position = Limb.Position
-		Hit.Rotation = Limb.Rotation
-	end)
-
-	task.delay(.3, function()
-		Hit:Remove()
-		updConnection:Disconnect()
-		VisibleHits[Limb] = nil
-	end)
-end
 
 local StoreJoint = function(Joint)
 	if not ScriptStorage.Joints[Joint] then
@@ -172,9 +134,9 @@ local UnProtectConnections = function(Obj)
 	}
 	
 	if Settings["Bypasses"].ProtectSimulations then
-		if not table.find(ProtectedConnections,PostSimulation) and not table.find(ProtectedConnections,Simulation) then
-			table.insert(ProtectedConnections,Simulation)
-			table.insert(ProtectedConnections,PostSimulation)
+		if not table.find(ProtectedConnections, PostSimulation) and not table.find(ProtectedConnections,Simulation) then
+			table.insert(ProtectedConnections, Simulation)
+			table.insert(ProtectedConnections, PostSimulation)
 		end
 	end
 
@@ -183,15 +145,6 @@ local UnProtectConnections = function(Obj)
 			Connection:Enable()
 		end
 	end
-end
-
-local function CleanUp()
-	ScriptStorage.CurrentObjects.Character = nil
-	ScriptStorage.CurrentObjects.Humanoid = nil
-	ScriptStorage.CurrentObjects.Tool = nil
-	ScriptStorage.CurrentObjects.Handle = nil
-
-	table.clear(ScriptStorage.Joints)
 end
 
 local JointObjects = function(Handle:Part)
@@ -212,17 +165,29 @@ local JointObjects = function(Handle:Part)
 	end)
 end
 
+local CharacterConnections = {
+	Added = nil;
+	Removed = nil;
+}
+
+local BringConn = nil
+
 local OnCharacterAdded = function(Character)
-	Character.ChildAdded:Connect(function(self)
-		if (self:IsA("Tool") and not ScriptStorage.Tools[self]) then
+	
+	if CharacterConnections.Added or CharacterConnections.Removed then
+		CharacterConnections.Added:Disconnect()
+		CharacterConnections.Removed:Disconnect()
+		
+		CharacterConnections.Added = nil
+		CharacterConnections.Removed = nil
+	end
+	
+	CharacterConnections.Added = Character.ChildAdded:Connect(function(self)
+		if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self) then
 			local Humanoid = Character.Humanoid
 			local Tool = self
 
 			local Handle = Tool:WaitForChild("Handle")
-
-			if Settings.Extra.Debug then
-				createNotif("Handle Found", "true", 1)
-			end
 
 			ScriptStorage.CurrentObjects.Character = Character
 			ScriptStorage.CurrentObjects.Humanoid = Humanoid
@@ -231,21 +196,24 @@ local OnCharacterAdded = function(Character)
 
 			ScriptStorage.Tools[self] = true
 
-			task.spawn(function()
-				--print("Running reach on", Tool.Name)
-				while task.wait(Settings["Reach Settings"].HitRate) do
-					if not ScriptStorage.Tools[self] then break end
-					JointObjects(Handle)
-				end
+			BringConn = RunService.Stepped:Connect(function()
+				JointObjects(Handle)
 			end)
 
 		end
 	end)
 
-	Character.ChildRemoved:Connect(function(self)
+	CharacterConnections.Removed = Character.ChildRemoved:Connect(function(self)
 		if (self:IsA("Tool") and ScriptStorage.Tools[self]) then
-			CleanUp()
-			ScriptStorage.Tools[self] = nil
+			table.clear(ScriptStorage.Joints)
+			
+			ScriptStorage.CurrentObjects.Character = nil
+			ScriptStorage.CurrentObjects.Humanoid = nil
+			ScriptStorage.CurrentObjects.Tool = nil
+			ScriptStorage.CurrentObjects.Handle = nil
+			BringConn = nil
+			
+			table.remove(ScriptStorage.Tools, table.find(ScriptStorage.Tools, self))
 		end
 	end)
 end
@@ -256,23 +224,10 @@ if Players.LocalPlayer.Character then
 	OnCharacterAdded(Players.LocalPlayer.Character)
 end
 
-
 RunService.Stepped:Connect(function()
 	local Tool, Handle, Character = ScriptStorage.CurrentObjects.Tool, ScriptStorage.CurrentObjects.Handle, ScriptStorage.CurrentObjects.Character
 	if Tool and Handle and Character and Settings["Reach Settings"].Enabled then
 		if Tool.Parent ~= LocalPlayer.Backpack then
-
-			local HRP = Character:FindFirstChild("HumanoidRootPart")
-			
-			if Settings.Extra.Visualiser and HRP then
-				Visualiser.Position = Handle.Position
-				Visualiser.Rotation = Handle.Rotation
-				Visualiser.Size = Vector3.one * Settings["Reach Settings"].Distance
-				Visualiser.Visible = true
-			else
-				Visualiser.Visible = false
-			end
-
 			table.clear(ScriptStorage.Joints)
 
 			if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
@@ -297,11 +252,9 @@ RunService.Stepped:Connect(function()
 			end
 		else
 			table.clear(ScriptStorage.Joints)
-			Visualiser.Visible = false
 		end
 	else
 		table.clear(ScriptStorage.Joints)
-		Visualiser.Visible = false
 	end
 end)
 
