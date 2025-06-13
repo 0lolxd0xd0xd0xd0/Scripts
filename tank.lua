@@ -5,7 +5,7 @@ local Settings = {
 
 		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
-		HitRate = 0.0088; -- Rate at which the limbs will be hit.
+		HitRate = 0.01; -- Rate at which the limbs will be hit.
 		LungeOnly = true; -- Whether or not the reach will be active only on lunge
 	};
 
@@ -148,6 +148,7 @@ local JointObjects = function(Handle:Part)
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
 			Joint.C0 = Joint.Part0.CFrame:Inverse() * Handle.CFrame 
+			print(`Hitting -> {Joint.Parent.Name}'s {Joint.Part0.Name}`)
 		end
 		PostSimulation:Wait()
 		for _,JointStorage in ScriptStorage.Joints do
@@ -218,7 +219,7 @@ RunService.Stepped:Connect(function()
 			if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
 
 			for _,Player in pairs(Players:GetPlayers()) do
-				if Player == LocalPlayer or Player.Team == LocalPlayer.Team then continue end
+				if Player == LocalPlayer then continue end
 				if Player.Character then
 					local Humanoid = Player.Character:FindFirstChild("Humanoid")
 					if Humanoid and Humanoid.Health > 0 then
