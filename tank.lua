@@ -154,6 +154,7 @@ local JointObjects = function(Handle:Part)
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
 			Joint.C0 = Joint.Part0.CFrame:Inverse() * Handle.CFrame 
+			print("Hit ->", Joint.Part0.Name)
 		end
 		PostSimulation:Wait()
 		for _,JointStorage in ScriptStorage.Joints do
@@ -196,8 +197,10 @@ local OnCharacterAdded = function(Character)
 			task.spawn(function()
 				print("Running reach on", Tool.Name)
 				while task.wait(Settings["Reach Settings"].HitRate) do
+					print("Loopy Loopy")
 					if not ScriptStorage.Tools[self] then break end
 					JointObjects(Handle)
+					print("Should be hittin")
 				end
 			end)
 		end
