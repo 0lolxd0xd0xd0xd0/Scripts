@@ -21,6 +21,7 @@ local Settings = {
 		InvisCheck = true; -- Checks if the Player is invisible
 		Debug = false; -- Will give some debug notifs.
 		ShowHit = false; -- Shows the limb that you are hitting
+		TeamCheck = true
 	};
 }
 
@@ -43,7 +44,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players["LocalPlayer"]
-local Simulation = RunService.PreSimulation;
+local Simulation = RunService.PreAnimation;
 local PostSimulation = RunService.PostSimulation;
 
 local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/jasvnn/Roblox/refs/heads/main/notifLib.lua"))()
@@ -85,6 +86,11 @@ local Keybinds = {
 	["Lunge Only"] = {Enum.KeyCode.L, function() 
 		Settings["Reach Settings"].LungeOnly = not Settings["Reach Settings"].LungeOnly
 		--createNotif("Lunge Only", tostring(Settings["Reach Settings"].LungeOnly), 1) 
+	end};
+
+	["Team Check"] = {Enum.KeyCode.B, function() 
+		Settings.Extra.TeamCheck = not Settings.Extra.TeamCheck
+		--createNotif("Visualiser", tostring(Settings.Extra.Visualiser), 1) 
 	end};
 
 	["Visualiser"] = {Enum.KeyCode.Home, function() 
@@ -148,7 +154,6 @@ local JointObjects = function(Handle:Part)
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
 			Joint.C0 = Joint.Part0.CFrame:Inverse() * Handle.CFrame 
-			print(`Hitting -> {Joint.Parent.Name}'s {Joint.Part0.Name}`)
 		end
 		PostSimulation:Wait()
 		for _,JointStorage in ScriptStorage.Joints do
@@ -186,10 +191,7 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Tool = Tool
 			ScriptStorage.CurrentObjects.Handle = Handle
 
-			ScriptStorage.Tools[self] = true
-			
-			
-			
+			ScriptStorage.Tools[self] = true	
 		end
 	end)
 
@@ -222,7 +224,9 @@ RunService.Stepped:Connect(function()
 			if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
 
 			for _,Player in pairs(Players:GetPlayers()) do
-				if Player == LocalPlayer or Player.Team == LocalPlayer.Team then continue end
+				if Player == LocalPlayer then continue end
+				if Settings.Extra.TeamCheck then if Player.Team == LocalPlayer.Team then continue end end
+				
 				if Player.Character then
 					local Humanoid = Player.Character:FindFirstChild("Humanoid")
 					if Humanoid and Humanoid.Health > 0 then
@@ -249,9 +253,8 @@ end)
 
 task.spawn(function()
 	while task.wait(Settings["Reach Settings"].HitRate) do
-		if ScriptStorage.CurrentObjects.Handle then
-			JointObjects(ScriptStorage.CurrentObjects.Handle)
-		end
+		if not ScriptStorage.CurrentObjects.Handle then return end
+		JointObjects(ScriptStorage.CurrentObjects.Handle)
 	end
 end)
 
