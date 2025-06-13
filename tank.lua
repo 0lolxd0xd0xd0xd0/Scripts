@@ -156,7 +156,6 @@ local JointObjects = function(Handle:Part)
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
 			Joint.C0 = Joint.Part0.CFrame:Inverse() * Handle.CFrame 
-			print("Hit ->", Joint.Part0.Name)
 		end
 		PostSimulation:Wait()
 		for _,JointStorage in Joints do
