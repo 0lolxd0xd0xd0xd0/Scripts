@@ -192,6 +192,14 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Handle = Handle
 
 			ScriptStorage.Tools[self] = true	
+			
+			task.spawn(function()
+				print("Running reach on", Tool.Name)
+				while task.wait(Settings["Reach Settings"].HitRate) do
+					if not ScriptStorage.Tools[self] then break end
+					JointObjects(Handle)
+				end
+			end)
 		end
 	end)
 
@@ -249,14 +257,6 @@ RunService.Stepped:Connect(function()
 		end
 	else
 		table.clear(ScriptStorage.Joints)
-	end
-end)
-
-task.spawn(function()
-	while task.wait(Settings["Reach Settings"].HitRate) do
-		if (not ScriptStorage.CurrentObjects.Handle) or #ScriptStorage.Joints == 0 then return end
-		print("Finding Limbs")
-		JointObjects(ScriptStorage.CurrentObjects.Handle)
 	end
 end)
 
