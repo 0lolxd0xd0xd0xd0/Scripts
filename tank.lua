@@ -150,8 +150,6 @@ end
 
 local JointObjects = function(Handle:Part)
 	Simulation:Once(function()
-		local Joints = table.clone(ScriptStorage.Joints)
-		
 		for _, JointStorage in Joints do
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
@@ -247,7 +245,6 @@ RunService.Stepped:Connect(function()
 						for _,Limb in pairs(CharacterLimbs) do
 							if Limb:IsA("BasePart") and Settings["Reach Settings"].LimbSelection[Limb.Name] and (CharacterRoot.Position - Handle.Position).Magnitude <= Settings["Reach Settings"].Distance then
 								if Settings["Extra"].InvisCheck then if Limb.Transparency > 0.7 then continue end end
-								print("Hitting", Player.Character.Name, Limb.Name)
 								GetJoint(Limb)
 							end
 						end
