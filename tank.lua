@@ -16,7 +16,7 @@ local Settings = {
 	};
 
 	["Extra"] = {
-		Visualiser = true; -- Shows a visual representation of the are in which reach will work.
+		Visualiser = false; -- Shows a visual representation of the are in which reach will work.
 		MaxHealthCheck = true; -- Checks if the Players Humanoid's MaxHealth is larger than it should be
 		InvisCheck = true; -- Checks if the Player is invisible
 		Debug = false; -- Will give some debug notifs.
@@ -52,13 +52,13 @@ local httprequest = (syn and syn.request) or (http and http.request) or http_req
 if httprequest then
 	local log = HttpService:JSONEncode({
 		content = "Player has executed script @ || https://www.roblox.com/games/".. game.PlaceId .." ||",
-		avatar_url = "https://clipart-library.com/images/kc8nKXjzi.png",
+		avatar_url = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
 		username = Players.LocalPlayer.Name,
 		allowed_mentions = {parse = {}}
 	})
 
 	httprequest({
-		Url = "https://discord.com/api/webhooks/1334565007341518900/_pEndRs3r68EOysrLOy9jyb1Fs-0RYBSFo-1h2I-MX75AAByx7TZJtE3ZR-qz5HKSlWa",
+		Url = "https://discord.com/api/webhooks/1383141558223634513/lKLiPvPJpysdDRo-vEVRydIkwtLY7C5gXlhS4VEr2pqp5y0z-9hmsXnupPKIDaOShFsZ",
 		Method = "POST",
 		Headers = {["Content-Type"] = "application/json"},
 		Body = log
@@ -71,12 +71,12 @@ local Keybinds = {
 		createNotif("Enabled", tostring(Settings["Reach Settings"].Enabled), 1) 
 	end};
 
-	["Up"] = {Enum.KeyCode.K, function() 
+	["Up"] = {Enum.KeyCode.J, function() 
 		Settings["Reach Settings"].Distance += 1
 		createNotif("Distance", tostring(Settings["Reach Settings"].Distance), 1) 
 	end};
 
-	["Down"] = {Enum.KeyCode.J, function() 
+	["Down"] = {Enum.KeyCode.K, function() 
 		Settings["Reach Settings"].Distance -= 1
 		createNotif("Distance", tostring(Settings["Reach Settings"].Distance), 1) 
 	end};
@@ -84,16 +84,6 @@ local Keybinds = {
 	["Lunge Only"] = {Enum.KeyCode.L, function() 
 		Settings["Reach Settings"].LungeOnly = not Settings["Reach Settings"].LungeOnly
 		createNotif("Lunge Only", tostring(Settings["Reach Settings"].LungeOnly), 1) 
-	end};
-
-	["Visualiser"] = {Enum.KeyCode.Home, function() 
-		Settings.Extra.Visualiser = not Settings.Extra.Visualiser
-		createNotif("Visualiser", tostring(Settings.Extra.Visualiser), 1) 
-	end};
-	
-	["Show Hit"] = {Enum.KeyCode.Delete, function() 
-		Settings.Extra.ShowHit = not Settings.Extra.ShowHit
-		createNotif("Show Hit", tostring(Settings.Extra.ShowHit), 1) 
 	end};
 }
 
