@@ -150,13 +150,13 @@ end
 
 local JointObjects = function(Handle:Part)
 	Simulation:Once(function()
-		for _, JointStorage in ScriptStorage.Joints do
+		for _, JointStorage in pairs(ScriptStorage.Joints) do
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
 			Joint.C0 = Joint.Part0.CFrame:Inverse() * Handle.CFrame 
 		end
 		PostSimulation:Wait()
-		for _,JointStorage in ScriptStorage.Joints do
+		for _,JointStorage in pairs(ScriptStorage.Joints) do
 			local Joint = JointStorage.Joint
 			Joint.C0 = JointStorage.OldC0
 			if Settings["Bypasses"].ProtectConnections then UnProtectConnections(Joint) end
