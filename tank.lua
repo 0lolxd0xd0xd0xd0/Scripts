@@ -21,7 +21,7 @@ local Settings = {
 		InvisCheck = true; -- Checks if the Player is invisible
 		Debug = false; -- Will give some debug notifs.
 		ShowHit = false; -- Shows the limb that you are hitting
-		TeamCheck = true
+		TeamCheck = false; -- Wont hit ppl on ur team
 	};
 }
 
@@ -44,7 +44,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
-local Simulation = RunService.PreAnimation;
+local Simulation = RunService.PreSimulation;
 local PostSimulation = RunService.PostSimulation;
 
 local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/jasvnn/Roblox/refs/heads/main/notifLib.lua"))()
