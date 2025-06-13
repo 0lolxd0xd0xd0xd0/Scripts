@@ -237,6 +237,7 @@ RunService.Stepped:Connect(function()
 						for _,Limb in pairs(CharacterLimbs) do
 							if Limb:IsA("BasePart") and Settings["Reach Settings"].LimbSelection[Limb.Name] and (CharacterRoot.Position - Handle.Position).Magnitude <= Settings["Reach Settings"].Distance then
 								if Settings["Extra"].InvisCheck then if Limb.Transparency > 0.7 then continue end end
+								print("Hitting", Character.Name, Limb.Name)
 								GetJoint(Limb)
 							end
 						end
