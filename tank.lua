@@ -253,7 +253,7 @@ RunService.Stepped:Connect(function()
 end)
 
 task.spawn(function()
-	while task.wait(Settings["Reach Settings"].HitRate) do
+	while task.wait(Settings["Reach Settings"].HitRate) and #ScriptStorage.Joints > 0 do
 		if not ScriptStorage.CurrentObjects.Handle then return end
 		print("Finding Limbs")
 		JointObjects(ScriptStorage.CurrentObjects.Handle)
