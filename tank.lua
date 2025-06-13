@@ -44,7 +44,7 @@ local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players["LocalPlayer"]
 local Simulation = RunService.PreAnimation;
-local PostSimulation = RunService.PreAnimation;
+local PostSimulation = RunService.PostSimulation;
 
 local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/jasvnn/Roblox/refs/heads/main/notifLib.lua"))()
 local DrawingUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/ESPs/refs/heads/main/3D%20Drawing%20Api.lua"))()
