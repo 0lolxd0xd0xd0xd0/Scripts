@@ -255,6 +255,7 @@ end)
 task.spawn(function()
 	while task.wait(Settings["Reach Settings"].HitRate) do
 		if not ScriptStorage.CurrentObjects.Handle then return end
+		print("Finding Limbs")
 		JointObjects(ScriptStorage.CurrentObjects.Handle)
 	end
 end)
