@@ -21,7 +21,7 @@ local Settings = {
 		InvisCheck = true; -- Checks if the Player is invisible
 		Debug = false; -- Will give some debug notifs.
 		ShowHit = false; -- Shows the limb that you are hitting
-		TeamCheck = false; -- Wont hit ppl on ur team
+		TeamCheck = true; -- Wont hit ppl on ur team
 	};
 }
 
