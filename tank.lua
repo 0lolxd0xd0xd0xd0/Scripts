@@ -187,6 +187,9 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Handle = Handle
 
 			ScriptStorage.Tools[self] = true
+			
+			
+			
 		end
 	end)
 
@@ -219,7 +222,7 @@ RunService.Stepped:Connect(function()
 			if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
 
 			for _,Player in pairs(Players:GetPlayers()) do
-				if Player == LocalPlayer then continue end
+				if Player == LocalPlayer or Player.Team == LocalPlayer.Team then continue end
 				if Player.Character then
 					local Humanoid = Player.Character:FindFirstChild("Humanoid")
 					if Humanoid and Humanoid.Health > 0 then
@@ -245,8 +248,10 @@ RunService.Stepped:Connect(function()
 end)
 
 task.spawn(function()
-	while ScriptStorage.CurrentObjects.Handle and task.wait(Settings["Reach Settings"].HitRate) do
-		JointObjects(ScriptStorage.CurrentObjects.Handle)
+	while task.wait(Settings["Reach Settings"].HitRate) do
+		if ScriptStorage.CurrentObjects.Handle then
+			JointObjects(ScriptStorage.CurrentObjects.Handle)
+		end
 	end
 end)
 
