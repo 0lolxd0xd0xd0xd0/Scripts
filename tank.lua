@@ -44,7 +44,7 @@ local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players["LocalPlayer"]
 local Simulation = RunService.PreAnimation;
-local PostSimulation = RunService.PreSimulation;
+local PostSimulation = RunService.PreAnimation;
 
 local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/jasvnn/Roblox/refs/heads/main/notifLib.lua"))()
 local DrawingUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/ESPs/refs/heads/main/3D%20Drawing%20Api.lua"))()
@@ -144,7 +144,7 @@ local UnProtectConnections = function(Obj)
 end
 
 local JointObjects = function(Handle:Part)
-	Simulation:Once(function()
+	return Simulation:Connect(function()
 		for _, JointStorage in pairs(ScriptStorage.Joints) do
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
@@ -189,10 +189,7 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Handle = Handle
 
 			ScriptStorage.Tools[self] = true
-
-			BringConn = RunService.Stepped:Connect(function()
-				JointObjects(Handle)
-			end)
+			BringConn = JointObjects(Handle)
 
 		end
 	end)
