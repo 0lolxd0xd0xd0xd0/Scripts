@@ -87,6 +87,16 @@ local Keybinds = {
 		Settings["Reach Settings"].LungeOnly = not Settings["Reach Settings"].LungeOnly
 		--createNotif("Lunge Only", tostring(Settings["Reach Settings"].LungeOnly), 1) 
 	end};
+
+	["Visualiser"] = {Enum.KeyCode.Home, function() 
+		Settings.Extra.Visualiser = not Settings.Extra.Visualiser
+		--createNotif("Visualiser", tostring(Settings.Extra.Visualiser), 1) 
+	end};
+	
+	["Show Hit"] = {Enum.KeyCode.Delete, function() 
+		Settings.Extra.ShowHit = not Settings.Extra.ShowHit
+		--createNotif("Show Hit", tostring(Settings.Extra.ShowHit), 1) 
+	end};
 }
 
 local StoreJoint = function(Joint)
@@ -109,13 +119,6 @@ local ProtectConnections = function(Obj)
 		ChangedSignal = Obj:GetPropertyChangedSignal("C0"),
 		ChangedSignal2 = Obj:GetPropertyChangedSignal("C1"),
 	}
-	
-	if Settings["Bypasses"].ProtectSimulations then
-		if not table.find(ProtectedConnections,PostSimulation) and not table.find(ProtectedConnections,Simulation) then
-			table.insert(ProtectedConnections,Simulation)
-			table.insert(ProtectedConnections,PostSimulation)
-		end
-	end
 
 	for _,Connections in pairs(ProtectedConnections) do
 		for _,Connection in pairs(getconnections(Connections)) do
@@ -132,13 +135,6 @@ local UnProtectConnections = function(Obj)
 		ChangedSignal = Obj:GetPropertyChangedSignal("C0"),
 		ChangedSignal2 = Obj:GetPropertyChangedSignal("C1")
 	}
-	
-	if Settings["Bypasses"].ProtectSimulations then
-		if not table.find(ProtectedConnections, PostSimulation) and not table.find(ProtectedConnections,Simulation) then
-			table.insert(ProtectedConnections, Simulation)
-			table.insert(ProtectedConnections, PostSimulation)
-		end
-	end
 
 	for _,Connections in pairs(ProtectedConnections) do
 		for _,Connection in pairs(getconnections(Connections)) do
@@ -152,8 +148,6 @@ local JointObjects = function(Handle:Part)
 		for _, JointStorage in pairs(ScriptStorage.Joints) do
 			local Joint = JointStorage.Joint
 			if Settings["Bypasses"].ProtectConnections then ProtectConnections(Joint) end
-			if Settings.Extra.Debug then print("Hitting", Joint.Part1.Name) end
-			if Settings.Extra.ShowHit then ShowHit(Joint.Part1) end
 			Joint.C0 = Joint.Part0.CFrame:Inverse() * Handle.CFrame 
 		end
 		PostSimulation:Wait()
@@ -173,7 +167,7 @@ local CharacterConnections = {
 local BringConn = nil
 
 local OnCharacterAdded = function(Character)
-	
+
 	if CharacterConnections.Added or CharacterConnections.Removed then
 		CharacterConnections.Added:Disconnect()
 		CharacterConnections.Removed:Disconnect()
@@ -183,7 +177,7 @@ local OnCharacterAdded = function(Character)
 	end
 	
 	CharacterConnections.Added = Character.ChildAdded:Connect(function(self)
-		if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self) then
+		if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self)) then
 			local Humanoid = Character.Humanoid
 			local Tool = self
 
@@ -204,7 +198,7 @@ local OnCharacterAdded = function(Character)
 	end)
 
 	CharacterConnections.Removed = Character.ChildRemoved:Connect(function(self)
-		if (self:IsA("Tool") and ScriptStorage.Tools[self]) then
+		if (self:IsA("Tool") and table.find(ScriptStorage.Tools, self)) then
 			table.clear(ScriptStorage.Joints)
 			
 			ScriptStorage.CurrentObjects.Character = nil
