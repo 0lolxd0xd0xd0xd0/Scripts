@@ -54,7 +54,7 @@ local httprequest = (syn and syn.request) or (http and http.request) or http_req
 if httprequest then
 	pcall(function()
 		local log = HttpService:JSONEncode({
-			content = nil,
+			content = "",
 			embeds = {
 				{
 					title = LocalPlayer.Name,
