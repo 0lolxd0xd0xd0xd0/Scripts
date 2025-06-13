@@ -53,8 +53,6 @@ local httprequest = (syn and syn.request) or (http and http.request) or http_req
 
 if httprequest then
 	pcall(function()
-		local Headshot = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
-
 		local log = HttpService:JSONEncode({
 			content = nil,
 			embeds = {
@@ -68,9 +66,6 @@ if httprequest then
 						name = "J-Ware has been Executed @ PLACENAME",
 						url = `https://www.roblox.com/games/{game.PlaceId}/ARENA#!/game-instances`
 					},
-					thumbnail = {
-						url = Headshot
-					}
 				}
 			},
 			username = "J-Ware",
