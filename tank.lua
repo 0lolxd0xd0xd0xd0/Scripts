@@ -54,30 +54,23 @@ local httprequest = (syn and syn.request) or (http and http.request) or http_req
 if httprequest then
 	pcall(function()
 		local log = HttpService:JSONEncode({
-			content = "",
-			embeds = {
+			["content"] = "",
+			["embeds"] = {
 				{
-					title = LocalPlayer.Name,
-					color =  8122044,
-					fields = {
+					["title"] = LocalPlayer.Name,
+					["color"] =  8122044,
+					["fields"] = {
 						{}
 					},
-					author = {
-						name = "J-Ware has been Executed @ PLACENAME",
-						url = `https://www.roblox.com/games/{game.PlaceId}/ARENA#!/game-instances`
+					["author"] = {
+						["name"] = "J-Ware has been Executed @ PLACENAME",
+						["url"] = `https://www.roblox.com/games/{game.PlaceId}/ARENA#!/game-instances`
 					},
 				}
 			},
-			username = "J-Ware",
-			avatar_url = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
-			attachments = {}
-		})
-
-		local log = HttpService:JSONEncode({
-			content = "Player has executed script @ || https://www.roblox.com/games/".. game.PlaceId .." ||",
-			avatar_url = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
-			username = "J-WARE - "..Players.LocalPlayer.Name,
-			allowed_mentions = {parse = {}}
+			["username"] = "J-Ware",
+			["avatar_url"] = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
+			["attachments"] = {}
 		})
 
 		httprequest({
