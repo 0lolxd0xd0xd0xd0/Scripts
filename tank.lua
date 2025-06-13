@@ -6,7 +6,7 @@ local Settings = {
 		LimbSelection = {["Left Arm"] = false, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
 		HitRate = 0.01; -- Rate at which the limbs will be hit.
-		LungeOnly = false; -- Whether or not the reach will be active only on lunge
+		LungeOnly = true; -- Whether or not the reach will be active only on lunge
 	};
 
 	["Bypasses"] = {
