@@ -69,32 +69,32 @@ end
 local Keybinds = {
 	["Toggle"] = {Enum.KeyCode.End, function() 
 		Settings["Reach Settings"].Enabled = not Settings["Reach Settings"].Enabled
-		createNotif("Enabled", tostring(Settings["Reach Settings"].Enabled), 1) 
+		--createNotif("Enabled", tostring(Settings["Reach Settings"].Enabled), 1) 
 	end};
 
 	["Up"] = {Enum.KeyCode.J, function() 
 		Settings["Reach Settings"].Distance += 1
-		createNotif("Distance", tostring(Settings["Reach Settings"].Distance), 1) 
+		--createNotif("Distance", tostring(Settings["Reach Settings"].Distance), 1) 
 	end};
 
 	["Down"] = {Enum.KeyCode.K, function() 
 		Settings["Reach Settings"].Distance -= 1
-		createNotif("Distance", tostring(Settings["Reach Settings"].Distance), 1) 
+		--createNotif("Distance", tostring(Settings["Reach Settings"].Distance), 1) 
 	end};
 
 	["Lunge Only"] = {Enum.KeyCode.L, function() 
 		Settings["Reach Settings"].LungeOnly = not Settings["Reach Settings"].LungeOnly
-		createNotif("Lunge Only", tostring(Settings["Reach Settings"].LungeOnly), 1) 
+		--createNotif("Lunge Only", tostring(Settings["Reach Settings"].LungeOnly), 1) 
 	end};
 
 	["Visualiser"] = {Enum.KeyCode.Home, function() 
 		Settings.Extra.Visualiser = not Settings.Extra.Visualiser
-		createNotif("Visualiser", tostring(Settings.Extra.Visualiser), 1) 
+		--createNotif("Visualiser", tostring(Settings.Extra.Visualiser), 1) 
 	end};
 	
 	["Show Hit"] = {Enum.KeyCode.Delete, function() 
 		Settings.Extra.ShowHit = not Settings.Extra.ShowHit
-		createNotif("Show Hit", tostring(Settings.Extra.ShowHit), 1) 
+		--createNotif("Show Hit", tostring(Settings.Extra.ShowHit), 1) 
 	end};
 }
 
