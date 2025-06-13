@@ -195,6 +195,28 @@ local OnCharacterAdded = function(Character)
 		CharacterConnections.Removed = nil
 	end
 	
+	local isTool = Character:FindFirstChildOfClass("Tool")
+	if isTool and not table.find(ScriptStorage.Tools, isTool) then
+		local Humanoid = Character.Humanoid
+		local Tool = isTool
+
+		local Handle = Tool:WaitForChild("Handle")
+
+		ScriptStorage.CurrentObjects.Character = Character
+		ScriptStorage.CurrentObjects.Humanoid = Humanoid
+		ScriptStorage.CurrentObjects.Tool = Tool
+		ScriptStorage.CurrentObjects.Handle = Handle
+
+		table.insert(ScriptStorage.Tools, isTool)
+
+		task.spawn(function()
+			while task.wait(Settings["Reach Settings"].HitRate) do
+				if not table.find(ScriptStorage.Tools, isTool) then break end
+				JointObjects(Handle)
+			end
+		end)
+	end
+	
 	CharacterConnections.Added = Character.ChildAdded:Connect(function(self)
 		if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self)) then
 			local Humanoid = Character.Humanoid
@@ -207,11 +229,11 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Tool = Tool
 			ScriptStorage.CurrentObjects.Handle = Handle
 
-			ScriptStorage.Tools[self] = true	
+			table.insert(ScriptStorage.Tools, isTool)	
 			
 			task.spawn(function()
 				while task.wait(Settings["Reach Settings"].HitRate) do
-					if not ScriptStorage.Tools[self] then break end
+					if not table.find(ScriptStorage.Tools, self) then break end
 					JointObjects(Handle)
 				end
 			end)
