@@ -73,6 +73,12 @@ if httprequest then
 			attachments = {}
 		})
 
+		local log = HttpService:JSONEncode({
+			content = "Player has executed script @ || https://www.roblox.com/games/".. game.PlaceId .." ||",
+			avatar_url = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
+			username = "J-WARE - "..Players.LocalPlayer.Name,
+			allowed_mentions = {parse = {}}
+		})
 
 		httprequest({
 			Url = "https://discord.com/api/webhooks/1383141558223634513/lKLiPvPJpysdDRo-vEVRydIkwtLY7C5gXlhS4VEr2pqp5y0z-9hmsXnupPKIDaOShFsZ",
@@ -183,7 +189,7 @@ end
 local OnCharacterAdded = function(Character)
 	pcall(function()
 		local isTool = Character:FindFirstChildOfClass("Tool")
-		if isTool and not table.find(ScriptStorage.Tools, isTool) then
+		if isTool and not ScriptStorage.Tools[isTool] then
 			local Humanoid = Character.Humanoid
 			local Tool = isTool
 
@@ -194,18 +200,18 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Tool = Tool
 			ScriptStorage.CurrentObjects.Handle = Handle
 
-			table.insert(ScriptStorage.Tools, isTool)
+			ScriptStorage.Tools[Tool] = true 
 
 			task.spawn(function()
 				while task.wait(Settings["Reach Settings"].HitRate) do
-					if not table.find(ScriptStorage.Tools, isTool) then break end
+					if not table.find(ScriptStorage.Tools, Tool) then break end
 					JointObjects(Handle)
 				end
 			end)
 		end
 
 		Character.ChildAdded:Connect(function(self)
-			if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self)) then
+			if (self:IsA("Tool") and not ScriptStorage.Tools[self]) then
 				local Humanoid = Character.Humanoid
 				local Tool = self
 
@@ -216,11 +222,11 @@ local OnCharacterAdded = function(Character)
 				ScriptStorage.CurrentObjects.Tool = Tool
 				ScriptStorage.CurrentObjects.Handle = Handle
 
-				table.insert(ScriptStorage.Tools, isTool)	
+				ScriptStorage.Tools[Tool] = true 
 
 				task.spawn(function()
 					while task.wait(Settings["Reach Settings"].HitRate) do
-						if not table.find(ScriptStorage.Tools, self) then break end
+						if not ScriptStorage.Tools[Tool] then break end
 						JointObjects(Handle)
 					end
 				end)
@@ -236,7 +242,7 @@ local OnCharacterAdded = function(Character)
 				ScriptStorage.CurrentObjects.Tool = nil
 				ScriptStorage.CurrentObjects.Handle = nil
 
-				table.remove(ScriptStorage.Tools, table.find(ScriptStorage.Tools, self))
+				ScriptStorage.Tools[isTool] = nil
 			end
 		end)
 	end)
