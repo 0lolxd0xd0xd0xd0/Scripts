@@ -44,7 +44,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
-local Simulation = RunService.PreSimulation;
+local Simulation = RunService.PreAnimation;
 local PostSimulation = RunService.PostSimulation;
 
 local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/jasvnn/Roblox/refs/heads/main/notifLib.lua"))()
@@ -253,8 +253,8 @@ RunService.Stepped:Connect(function()
 end)
 
 task.spawn(function()
-	while task.wait(Settings["Reach Settings"].HitRate) and #ScriptStorage.Joints > 0 do
-		if not ScriptStorage.CurrentObjects.Handle then return end
+	while task.wait(Settings["Reach Settings"].HitRate) do
+		if (not ScriptStorage.CurrentObjects.Handle) or #ScriptStorage.Joints == 0 then return end
 		print("Finding Limbs")
 		JointObjects(ScriptStorage.CurrentObjects.Handle)
 	end
