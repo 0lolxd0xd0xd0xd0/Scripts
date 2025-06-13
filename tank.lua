@@ -43,7 +43,7 @@ local Gui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
-local LocalPlayer = Players["LocalPlayer"]
+local LocalPlayer = Players.LocalPlayer
 local Simulation = RunService.PreAnimation;
 local PostSimulation = RunService.PostSimulation;
 
@@ -237,7 +237,7 @@ RunService.Stepped:Connect(function()
 						for _,Limb in pairs(CharacterLimbs) do
 							if Limb:IsA("BasePart") and Settings["Reach Settings"].LimbSelection[Limb.Name] and (CharacterRoot.Position - Handle.Position).Magnitude <= Settings["Reach Settings"].Distance then
 								if Settings["Extra"].InvisCheck then if Limb.Transparency > 0.7 then continue end end
-								print("Hitting", Character.Name, Limb.Name)
+								print("Hitting", Player.Character.Name, Limb.Name)
 								GetJoint(Limb)
 							end
 						end
