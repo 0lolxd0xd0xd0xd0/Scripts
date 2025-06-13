@@ -39,6 +39,7 @@ local Players = game:GetService("Players");
 local UserInputService = game:GetService("UserInputService")
 local Gui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
 
 local LocalPlayer = Players["LocalPlayer"]
 local Simulation = RunService.PreSimulation;
@@ -84,6 +85,16 @@ local Keybinds = {
 	["Lunge Only"] = {Enum.KeyCode.L, function() 
 		Settings["Reach Settings"].LungeOnly = not Settings["Reach Settings"].LungeOnly
 		createNotif("Lunge Only", tostring(Settings["Reach Settings"].LungeOnly), 1) 
+	end};
+
+	["Visualiser"] = {Enum.KeyCode.Home, function() 
+		Settings.Extra.Visualiser = not Settings.Extra.Visualiser
+		createNotif("Visualiser", tostring(Settings.Extra.Visualiser), 1) 
+	end};
+	
+	["Show Hit"] = {Enum.KeyCode.Delete, function() 
+		Settings.Extra.ShowHit = not Settings.Extra.ShowHit
+		createNotif("Show Hit", tostring(Settings.Extra.ShowHit), 1) 
 	end};
 }
 
