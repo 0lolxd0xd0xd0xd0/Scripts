@@ -52,19 +52,40 @@ local createNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/j
 local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 
 if httprequest then
-	local log = HttpService:JSONEncode({
-		content = "Player has executed script @ || https://www.roblox.com/games/".. game.PlaceId .." ||",
-		avatar_url = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
-		username = `CBring -> {Players.LocalPlayer.Name}`,
-		allowed_mentions = {parse = {}}
-	})
+	pcall(function()
+		local Headshot = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 
-	httprequest({
-		Url = "https://discord.com/api/webhooks/1383141558223634513/lKLiPvPJpysdDRo-vEVRydIkwtLY7C5gXlhS4VEr2pqp5y0z-9hmsXnupPKIDaOShFsZ",
-		Method = "POST",
-		Headers = {["Content-Type"] = "application/json"},
-		Body = log
-	})
+		local log = HttpService:JSONEncode({
+			content = nil,
+			embeds = {
+				{
+					title = LocalPlayer.Name,
+					color =  8122044,
+					fields = {
+						{}
+					},
+					author = {
+						name = "J-Ware has been Executed @ PLACENAME",
+						url = `https://www.roblox.com/games/{game.PlaceId}/ARENA#!/game-instances`
+					},
+					thumbnail = {
+						url = Headshot
+					}
+				}
+			},
+			username = "J-Ware",
+			avatar_url = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
+			attachments = {}
+		})
+
+
+		httprequest({
+			Url = "https://discord.com/api/webhooks/1383141558223634513/lKLiPvPJpysdDRo-vEVRydIkwtLY7C5gXlhS4VEr2pqp5y0z-9hmsXnupPKIDaOShFsZ",
+			Method = "POST",
+			Headers = {["Content-Type"] = "application/json"},
+			Body = log
+		})
+	end)
 end
 
 local Keybinds = {
@@ -194,7 +215,6 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.Tools[self] = true	
 			
 			task.spawn(function()
-				print("Running reach on", Tool.Name)
 				while task.wait(Settings["Reach Settings"].HitRate) do
 					if not ScriptStorage.Tools[self] then break end
 					JointObjects(Handle)
