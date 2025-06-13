@@ -180,38 +180,12 @@ local JointObjects = function(Handle:Part)
 	end)
 end
 
-local CharacterConnections = {
-	Added = nil;
-	Removed = nil;
-}
-
 local OnCharacterAdded = function(Character)
-	local isTool = Character:FindFirstChildOfClass("Tool")
-	if isTool and not table.find(ScriptStorage.Tools, isTool) then
-		local Humanoid = Character.Humanoid
-		local Tool = isTool
-
-		local Handle = Tool:WaitForChild("Handle")
-
-		ScriptStorage.CurrentObjects.Character = Character
-		ScriptStorage.CurrentObjects.Humanoid = Humanoid
-		ScriptStorage.CurrentObjects.Tool = Tool
-		ScriptStorage.CurrentObjects.Handle = Handle
-
-		table.insert(ScriptStorage.Tools, isTool)
-
-		task.spawn(function()
-			while task.wait(Settings["Reach Settings"].HitRate) do
-				if not table.find(ScriptStorage.Tools, isTool) then break end
-				JointObjects(Handle)
-			end
-		end)
-	end
-	
-	Character.ChildAdded:Connect(function(self)
-		if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self)) then
+	pcall(function()
+		local isTool = Character:FindFirstChildOfClass("Tool")
+		if isTool and not table.find(ScriptStorage.Tools, isTool) then
 			local Humanoid = Character.Humanoid
-			local Tool = self
+			local Tool = isTool
 
 			local Handle = Tool:WaitForChild("Handle")
 
@@ -220,28 +194,51 @@ local OnCharacterAdded = function(Character)
 			ScriptStorage.CurrentObjects.Tool = Tool
 			ScriptStorage.CurrentObjects.Handle = Handle
 
-			table.insert(ScriptStorage.Tools, isTool)	
-			
+			table.insert(ScriptStorage.Tools, isTool)
+
 			task.spawn(function()
 				while task.wait(Settings["Reach Settings"].HitRate) do
-					if not table.find(ScriptStorage.Tools, self) then break end
+					if not table.find(ScriptStorage.Tools, isTool) then break end
 					JointObjects(Handle)
 				end
 			end)
 		end
-	end)
 
-	Character.ChildRemoved:Connect(function(self)
-		if (self:IsA("Tool") and table.find(ScriptStorage.Tools, self)) then
-			table.clear(ScriptStorage.Joints)
-			
-			ScriptStorage.CurrentObjects.Character = nil
-			ScriptStorage.CurrentObjects.Humanoid = nil
-			ScriptStorage.CurrentObjects.Tool = nil
-			ScriptStorage.CurrentObjects.Handle = nil
-			
-			table.remove(ScriptStorage.Tools, table.find(ScriptStorage.Tools, self))
-		end
+		Character.ChildAdded:Connect(function(self)
+			if (self:IsA("Tool") and not table.find(ScriptStorage.Tools, self)) then
+				local Humanoid = Character.Humanoid
+				local Tool = self
+
+				local Handle = Tool:WaitForChild("Handle")
+
+				ScriptStorage.CurrentObjects.Character = Character
+				ScriptStorage.CurrentObjects.Humanoid = Humanoid
+				ScriptStorage.CurrentObjects.Tool = Tool
+				ScriptStorage.CurrentObjects.Handle = Handle
+
+				table.insert(ScriptStorage.Tools, isTool)	
+
+				task.spawn(function()
+					while task.wait(Settings["Reach Settings"].HitRate) do
+						if not table.find(ScriptStorage.Tools, self) then break end
+						JointObjects(Handle)
+					end
+				end)
+			end
+		end)
+
+		Character.ChildRemoved:Connect(function(self)
+			if (self:IsA("Tool") and table.find(ScriptStorage.Tools, self)) then
+				table.clear(ScriptStorage.Joints)
+
+				ScriptStorage.CurrentObjects.Character = nil
+				ScriptStorage.CurrentObjects.Humanoid = nil
+				ScriptStorage.CurrentObjects.Tool = nil
+				ScriptStorage.CurrentObjects.Handle = nil
+
+				table.remove(ScriptStorage.Tools, table.find(ScriptStorage.Tools, self))
+			end
+		end)
 	end)
 end
 
@@ -249,13 +246,12 @@ LocalPlayer.CharacterAdded:Connect(OnCharacterAdded)
 
 LocalPlayer.CharacterRemoving:Connect(function()
 	table.clear(ScriptStorage.Joints)
+	table.clear(ScriptStorage.Tools)
 
 	ScriptStorage.CurrentObjects.Character = nil
 	ScriptStorage.CurrentObjects.Humanoid = nil
 	ScriptStorage.CurrentObjects.Tool = nil
 	ScriptStorage.CurrentObjects.Handle = nil
-
-	table.clear(ScriptStorage.Tools)
 end)
 
 if LocalPlayer.Character then
@@ -263,39 +259,41 @@ if LocalPlayer.Character then
 end
 
 RunService.Stepped:Connect(function()
-	local Tool, Handle, Character = ScriptStorage.CurrentObjects.Tool, ScriptStorage.CurrentObjects.Handle, ScriptStorage.CurrentObjects.Character
-	if Tool and Handle and Character and Settings["Reach Settings"].Enabled then
-		if Tool.Parent ~= LocalPlayer.Backpack then
-			table.clear(ScriptStorage.Joints)
+	pcall(function()
+		local Tool, Handle, Character = ScriptStorage.CurrentObjects.Tool, ScriptStorage.CurrentObjects.Handle, ScriptStorage.CurrentObjects.Character
+		if Tool and Handle and Character and Settings["Reach Settings"].Enabled then
+			if Tool.Parent ~= LocalPlayer.Backpack then
+				table.clear(ScriptStorage.Joints)
 
-			if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
+				if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
 
-			for _,Player in pairs(Players:GetPlayers()) do
-				if Player == LocalPlayer then continue end
-				if Settings.Extra.TeamCheck then if Player.Team == LocalPlayer.Team then continue end end
-				
-				if Player.Character then
-					local Humanoid = Player.Character:FindFirstChild("Humanoid")
-					if Humanoid and Humanoid.Health > 0 then
-						if Settings["Extra"].MaxHealthCheck then if Humanoid.MaxHealth > 101 then continue end end
-						local CharacterLimbs = Player.Character:GetChildren()
-						local CharacterRoot = Player.Character:FindFirstChild("HumanoidRootPart")
-						if not CharacterRoot then continue end
-						for _,Limb in pairs(CharacterLimbs) do
-							if Limb:IsA("BasePart") and Settings["Reach Settings"].LimbSelection[Limb.Name] and (CharacterRoot.Position - Handle.Position).Magnitude <= Settings["Reach Settings"].Distance then
-								if Settings["Extra"].InvisCheck then if Limb.Transparency > 0.7 then continue end end
-								GetJoint(Limb)
+				for _,Player in pairs(Players:GetPlayers()) do
+					if Player == LocalPlayer then continue end
+					if Settings.Extra.TeamCheck then if Player.Team == LocalPlayer.Team then continue end end
+
+					if Player.Character then
+						local Humanoid = Player.Character:FindFirstChild("Humanoid")
+						if Humanoid and Humanoid.Health > 0 then
+							if Settings["Extra"].MaxHealthCheck then if Humanoid.MaxHealth > 101 then continue end end
+							local CharacterLimbs = Player.Character:GetChildren()
+							local CharacterRoot = Player.Character:FindFirstChild("HumanoidRootPart")
+							if not CharacterRoot then continue end
+							for _,Limb in pairs(CharacterLimbs) do
+								if Limb:IsA("BasePart") and Settings["Reach Settings"].LimbSelection[Limb.Name] and (CharacterRoot.Position - Handle.Position).Magnitude <= Settings["Reach Settings"].Distance then
+									if Settings["Extra"].InvisCheck then if Limb.Transparency > 0.7 then continue end end
+									GetJoint(Limb)
+								end
 							end
 						end
 					end
 				end
+			else
+				table.clear(ScriptStorage.Joints)
 			end
 		else
 			table.clear(ScriptStorage.Joints)
 		end
-	else
-		table.clear(ScriptStorage.Joints)
-	end
+	end)
 end)
 
 UserInputService.InputBegan:Connect(function(input, TypeCheck) 
