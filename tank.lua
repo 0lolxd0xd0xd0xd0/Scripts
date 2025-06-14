@@ -54,11 +54,11 @@ local httprequest = (syn and syn.request) or (http and http.request) or http_req
 if httprequest then
 	pcall(function()
 		local Data = HttpService:JSONEncode({
-			username = "Attendance Logs",
+			username = "J-WARE",
 			avatar_url = '',
 			embeds = {
 				{
-					title = "<:VelvixiaLogo:1344483379567005708> Velvixia | Event Logs",
+					title = "J-WARE | Execution Logged",
 					color = tonumber(0xf50808),
 					description = `Script Executed in [{game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name}](https://www.roblox.com/games/{tostring(game.PlaceId)}) !`,
 					timestamp = '',
@@ -68,11 +68,8 @@ if httprequest then
 						url = '',
 						icon_url = ''
 					},
-					image = {["url"] = 'https://cdn.discordapp.com/attachments/1343055108929360010/1368033945232343090/image.png?ex=6816c065&is=68156ee5&hm=bd7d1c46a25adc194c33815c8d5392fda1f86ae2386f48c7d3fde3bb6d385ed4&'},
-					thumbnail = {["url"] = 'https://tr.rbxcdn.com/180DAY-352e6051687801e1090123176992d6a1/150/150/Image/Png/noFilter'},
 					footer = {
 						text = `Players: {tostring(#Players:GetPlayers())}`,
-						icon_url = 'https://tr.rbxcdn.com/180DAY-352e6051687801e1090123176992d6a1/150/150/Image/Png/noFilter'
 					},
 					fields = {
 						{
