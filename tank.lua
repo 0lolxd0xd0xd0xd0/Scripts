@@ -5,7 +5,7 @@ local Settings = {
 
 		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
-		HitRate = 0.01; -- Rate at which the limbs will be hit.
+		HitRate = 1; -- Rate at which the limbs will be hit.
 		LungeOnly = true; -- Whether or not the reach will be active only on lunge
 	};
 
@@ -225,13 +225,6 @@ local OnCharacterAdded = function(Character)
 				ScriptStorage.CurrentObjects.Handle = Handle
 
 				ScriptStorage.Tools[Tool] = true 
-
-				task.spawn(function()
-					while task.wait(Settings["Reach Settings"].HitRate) do
-						if not ScriptStorage.Tools[Tool] then break end
-						JointObjects(Handle)
-					end
-				end)
 			end
 		end)
 
