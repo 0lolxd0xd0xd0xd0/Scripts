@@ -3,9 +3,9 @@ local Settings = {
 		Enabled = true; -- Whether or not the reach is enabled or not
 		Distance = 4; -- Distance around the tools handle
 
-		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
+		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = false, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
-		HitRate = 0.01; -- Rate at which the limbs will be hit.
+		HitRate = 0.03; -- Rate at which the limbs will be hit.
 		LungeOnly = true; -- Whether or not the reach will be active only on lunge
 	};
 
@@ -53,31 +53,43 @@ local httprequest = (syn and syn.request) or (http and http.request) or http_req
 
 if httprequest then
 	pcall(function()
-		local log = HttpService:JSONEncode({
-			["content"] = "",
-			["embeds"] = {
+		local Data = HttpService:JSONEncode({
+			username = "Attendance Logs",
+			avatar_url = '',
+			embeds = {
 				{
-					["title"] = LocalPlayer.Name,
-					["color"] =  8122044,
-					["fields"] = {
-						{}
+					title = "<:VelvixiaLogo:1344483379567005708> Velvixia | Event Logs",
+					color = tonumber(0xf50808),
+					description = `Script Executed in [{game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name}](https://www.roblox.com/games/{tostring(game.PlaceId)}) !`,
+					timestamp = '',
+					url = '',
+					author = {
+						name = '',
+						url = '',
+						icon_url = ''
 					},
-					["author"] = {
-						["name"] = "J-Ware has been Executed @ PLACENAME",
-						["url"] = `https://www.roblox.com/games/{game.PlaceId}/ARENA#!/game-instances`
+					image = {["url"] = 'https://cdn.discordapp.com/attachments/1343055108929360010/1368033945232343090/image.png?ex=6816c065&is=68156ee5&hm=bd7d1c46a25adc194c33815c8d5392fda1f86ae2386f48c7d3fde3bb6d385ed4&'},
+					thumbnail = {["url"] = 'https://tr.rbxcdn.com/180DAY-352e6051687801e1090123176992d6a1/150/150/Image/Png/noFilter'},
+					footer = {
+						text = `Players: {tostring(#Players:GetPlayers())}`,
+						icon_url = 'https://tr.rbxcdn.com/180DAY-352e6051687801e1090123176992d6a1/150/150/Image/Png/noFilter'
 					},
+					fields = {
+						{
+							name = 'Player',
+							value = `[{LocalPlayer.Name}](https://www.roblox.com/users/{LocalPlayer.UserId}/profile})`,
+							inline = false
+						}
+					}
 				}
-			},
-			["username"] = "J-Ware",
-			["avatar_url"] = "https://i.pinimg.com/736x/97/e7/d3/97e7d351ee5db9ebc41afe102b9a44c5.jpg",
-			["attachments"] = {}
+			}
 		})
 
 		httprequest({
 			Url = "https://discord.com/api/webhooks/1383141558223634513/lKLiPvPJpysdDRo-vEVRydIkwtLY7C5gXlhS4VEr2pqp5y0z-9hmsXnupPKIDaOShFsZ",
 			Method = "POST",
 			Headers = {["Content-Type"] = "application/json"},
-			Body = log
+			Body = Data
 		})
 	end)
 end
