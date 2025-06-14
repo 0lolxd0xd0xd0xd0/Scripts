@@ -1,7 +1,7 @@
 local Settings = {
 	["Reach Settings"] = {
 		Enabled = true; -- Whether or not the reach is enabled or not
-		Distance = 4; -- Distance around the tools handle
+		Distance = 3; -- Distance around the tools handle
 
 		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
@@ -274,43 +274,9 @@ RunService.Stepped:Connect(function()
 	lastTick = os.clock()
 end)
 
-RunService.Stepped:Connect(function()
-	-- Limb Detection
-	
-	pcall(function()
-		local Tool, Handle, Character = ScriptStorage.CurrentObjects.Tool, ScriptStorage.CurrentObjects.Handle, ScriptStorage.CurrentObjects.Character
-		if Tool and Handle and Character and Settings["Reach Settings"].Enabled then
-			if Tool.Parent ~= LocalPlayer.Backpack then
-				table.clear(ScriptStorage.Joints)
-
-				if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
-
-				local Radius = workspace:GetPartBoundsInRadius(Handle.Position, Settings["Reach Settings"].Distance)
-				
-				if #Radius == 0 then return end
-				
-				for _,Part in pairs(Radius) do
-					local Humanoid = Part.Parent:FindFirstChildOfClass("Humanoid")
-					if Settings["Extra"].TeamCheck then if IsTeam(Players:GetPlayerFromCharacter(Part.Parent)) then continue end end
-					if (Humanoid and Part.Parent ~= Character) then
-						if Settings["Extra"].MaxHealthCheck then if Humanoid.MaxHealth > 101 then continue end end
-						if Humanoid.Health > 0 and Settings["Reach Settings"].LimbSelection[Part.Name] then
-							if Settings["Extra"].InvisCheck then if Part.Transparency > 0.7 then continue end end
-							GetJoint(Part)
-						end
-					end 
-				end
-			elseif #ScriptStorage.Tools > 0 then
-				table.clear(ScriptStorage.Joints)
-			end
-		elseif #ScriptStorage.Joints > 0 then
-			table.clear(ScriptStorage.Joints)
-		end
-	end)
-end)
-
----- Remove This for test
 --RunService.Stepped:Connect(function()
+--	-- Limb Detection
+	
 --	pcall(function()
 --		local Tool, Handle, Character = ScriptStorage.CurrentObjects.Tool, ScriptStorage.CurrentObjects.Handle, ScriptStorage.CurrentObjects.Character
 --		if Tool and Handle and Character and Settings["Reach Settings"].Enabled then
@@ -319,34 +285,68 @@ end)
 
 --				if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
 
---				for _,Player in pairs(Players:GetPlayers()) do
---					if Player == LocalPlayer then continue end
---					if Settings.Extra.TeamCheck then if Player.Team == LocalPlayer.Team then continue end end
-
---					if Player.Character then
---						local Humanoid = Player.Character:FindFirstChild("Humanoid")
---						if Humanoid and Humanoid.Health > 0 then
---							if Settings["Extra"].MaxHealthCheck then if Humanoid.MaxHealth > 101 then continue end end
---							local CharacterLimbs = Player.Character:GetChildren()
---							local CharacterRoot = Player.Character:FindFirstChild("HumanoidRootPart")
---							if not CharacterRoot then continue end
---							for _,Limb in pairs(CharacterLimbs) do
---								if Limb:IsA("BasePart") and Settings["Reach Settings"].LimbSelection[Limb.Name] and (CharacterRoot.Position - Handle.Position).Magnitude <= Settings["Reach Settings"].Distance then
---									if Settings["Extra"].InvisCheck then if Limb.Transparency > 0.7 then continue end end
---									GetJoint(Limb)
---								end
---							end
+--				local Radius = workspace:GetPartBoundsInRadius(Handle.Position, Settings["Reach Settings"].Distance)
+				
+--				if #Radius == 0 then return end
+				
+--				for _,Part in pairs(Radius) do
+--					local Humanoid = Part.Parent:FindFirstChildOfClass("Humanoid")
+--					if Settings["Extra"].TeamCheck then if IsTeam(Players:GetPlayerFromCharacter(Part.Parent)) then continue end end
+--					if (Humanoid and Part.Parent ~= Character) then
+--						if Settings["Extra"].MaxHealthCheck then if Humanoid.MaxHealth > 101 then continue end end
+--						if Humanoid.Health > 0 and Settings["Reach Settings"].LimbSelection[Part.Name] then
+--							if Settings["Extra"].InvisCheck then if Part.Transparency > 0.7 then continue end end
+--							GetJoint(Part)
 --						end
---					end
+--					end 
 --				end
---			else
+--			elseif #ScriptStorage.Tools > 0 then
 --				table.clear(ScriptStorage.Joints)
 --			end
---		else
+--		elseif #ScriptStorage.Joints > 0 then
 --			table.clear(ScriptStorage.Joints)
 --		end
 --	end)
 --end)
+
+---- Remove This for test
+RunService.Stepped:Connect(function()
+	pcall(function()
+		local Tool, Handle, Character = ScriptStorage.CurrentObjects.Tool, ScriptStorage.CurrentObjects.Handle, ScriptStorage.CurrentObjects.Character
+		if Tool and Handle and Character and Settings["Reach Settings"].Enabled then
+			if Tool.Parent ~= LocalPlayer.Backpack then
+				table.clear(ScriptStorage.Joints)
+
+				if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
+
+				for _,Player in pairs(Players:GetPlayers()) do
+					if Player == LocalPlayer then continue end
+					if Settings.Extra.TeamCheck then if Player.Team == LocalPlayer.Team then continue end end
+
+					if Player.Character then
+						local Humanoid = Player.Character:FindFirstChild("Humanoid")
+						if Humanoid and Humanoid.Health > 0 then
+							if Settings["Extra"].MaxHealthCheck then if Humanoid.MaxHealth > 101 then continue end end
+							local CharacterLimbs = Player.Character:GetChildren()
+							local CharacterRoot = Player.Character:FindFirstChild("HumanoidRootPart")
+							if not CharacterRoot then continue end
+							for _,Limb in pairs(CharacterLimbs) do
+								if Limb:IsA("BasePart") and Settings["Reach Settings"].LimbSelection[Limb.Name] and (CharacterRoot.Position - Handle.Position).Magnitude <= Settings["Reach Settings"].Distance then
+									if Settings["Extra"].InvisCheck then if Limb.Transparency > 0.7 then continue end end
+									GetJoint(Limb)
+								end
+							end
+						end
+					end
+				end
+			else
+				table.clear(ScriptStorage.Joints)
+			end
+		else
+			table.clear(ScriptStorage.Joints)
+		end
+	end)
+end)
 
 UserInputService.InputBegan:Connect(function(input, TypeCheck) 
 	if TypeCheck then return end
