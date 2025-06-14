@@ -3,7 +3,7 @@ local Settings = {
 		Enabled = true; -- Whether or not the reach is enabled or not
 		Distance = 4; -- Distance around the tools handle
 
-		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = true}; -- Limbs that will be brung to your sword.
+		LimbSelection = {["Left Arm"] = true, ["Left Leg"] = true, ["Right Arm"] = false, ["Right Leg"] = true, ["Torso"] = false, ["Head"] = false}; -- Limbs that will be brung to your sword.
 
 		HitRate = 1; -- Rate at which the limbs will be hit.
 		LungeOnly = true; -- Whether or not the reach will be active only on lunge
@@ -264,13 +264,14 @@ local lastTick = os.clock()
 RunService.Stepped:Connect(function()
 	-- Reach Loop
 	if (os.clock() - lastTick <= Settings["Reach Settings"].HitRate) then return end 
-	
 	pcall(function()
 		local Tool, Handle, Character = ScriptStorage.CurrentObjects.Tool, ScriptStorage.CurrentObjects.Handle, ScriptStorage.CurrentObjects.Character
 		if Tool and Handle and Character and Settings["Reach Settings"].Enabled then
 			JointObjects(Handle)
 		end
 	end)
+	
+	lastTick = os.clock()
 end)
 
 RunService.Stepped:Connect(function()
