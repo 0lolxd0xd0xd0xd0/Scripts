@@ -292,7 +292,9 @@ RunService.Stepped:Connect(function()
 				if Settings["Reach Settings"].LungeOnly then if Tool.GripUp.Z ~= 0 then return end end
 
 				local Radius = workspace:GetPartBoundsInRadius(Handle.Position, Settings["Reach Settings"].Distance)
-
+				
+				if #Radius == 0 then return end
+				
 				for _,Part in pairs(Radius) do
 					local Humanoid = Part.Parent:FindFirstChildOfClass("Humanoid")
 					if Settings["Extra"].TeamCheck then if IsTeam(Players:GetPlayerFromCharacter(Part.Parent)) then continue end end
@@ -304,10 +306,10 @@ RunService.Stepped:Connect(function()
 						end
 					end 
 				end
-			else
+			elseif #ScriptStorage.Tools > 0 then
 				table.clear(ScriptStorage.Joints)
 			end
-		else
+		elseif #ScriptStorage.Joints > 0 then
 			table.clear(ScriptStorage.Joints)
 		end
 	end)
